@@ -1,0 +1,42 @@
+#!/bin/bash
+
+#set -x
+
+PARAMS=""
+while (( "$#" )); do
+  case "$1" in
+    -f|--data-file)
+      DATA_FILE_ARG=$2
+      shift 2
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*|--*=)
+      echo "Error: Unsupported flag $1" >&2
+      exit 1
+      ;;
+    *)
+      PARAMS="$PARAMS $1"
+      shift
+      ;;
+  esac
+done
+
+eval set -- "$PARAMS"
+
+if [ -z ${DATA_FILE_ARG+x} ]; then
+  echo 'Must supply --data-file|-f argument to represent YAML file of Discourse set up data'
+  exit 1
+else
+  DATA_FILE=$DATA_FILE_ARG
+fi
+
+RENDERED_FILE=app.yml
+
+mkdir -p ../target
+
+echo "Applying Jinja2 template to produce rendered Discourse app.yml file: ../target/${RENDERED_FILE}"
+
+jinja2 ../app.yml.j2 ${DATA_FILE} --format=yml > ../target/${RENDERED_FILE}
