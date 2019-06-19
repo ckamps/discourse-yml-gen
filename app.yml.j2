@@ -59,9 +59,14 @@ env:
   ## TODO: The SMTP mail server used to validate new accounts and send notifications
   # SMTP ADDRESS, username, and password are required
   # WARNING the char '#' in SMTP password can cause problems!
-  DISCOURSE_SMTP_ADDRESS: {{discourse.smtp.server}}
-  DISCOURSE_SMTP_PORT: {{discourse.smtp.port}}
+  DISCOURSE_SMTP_ADDRESS:   {{discourse.smtp.server}}
+  DISCOURSE_SMTP_PORT:      {{discourse.smtp.port}}
+{% if discourse.smtp.user_name %}
+  DISCOURSE_SMTP_USER_NAME: {{discourse.smtp.user_name}}
+  DISCOURSE_SMTP_PASSWORD:  {{discourse.smtp.password}}
+{% else %}
   DISCOURSE_SMTP_AUTHENTICATION: none
+{% endif %}
   #DISCOURSE_SMTP_ENABLE_START_TLS: true           # (optional, default true)
 
   ## If you added the Lets Encrypt template, uncomment below to get a free SSL certificate
@@ -71,6 +76,7 @@ env:
   ## see https://meta.discourse.org/t/14857 for details
   #DISCOURSE_CDN_URL: https://discourse-cdn.example.com
 
+{% if discourse.saml %}
 ## Saml plugin setting
   DISCOURSE_SAML_TARGET_URL: {{discourse.saml.target_url}}
   DISCOURSE_SAML_CERT_FINGERPRINT: '{{discourse.saml.fingerprint}}'
@@ -81,9 +87,10 @@ env:
   DISCOURSE_SAML_ATTRIBUTE_STATEMENTS: 'name:fullName'
   
   DISCOURSE_SAML_AUTO_CREATE_ACCOUNT: true
-  #DISCOURSE_SAML_DEBUG_AUTH: true
+  DISCOURSE_SAML_DEBUG_AUTH: true
   
   DISCOURSE_SAML_CERT: '{{discourse.saml.cert}}'
+{% endif %}
 
 ## The Docker container is stateless; all data is stored in /shared
 volumes:
